@@ -61,7 +61,14 @@ impl<T> FastVec<T> {
     // Student 1 and Student 2 should implement this together
     // Use the project handout as a guide for this part!
     pub fn get(&self, i: usize) -> &T {
-        todo!("implement get!");
+        if i >= self.len {
+            panic!("Index out of bounds!");
+        }
+        unsafe {
+            let ptr = self.ptr_to_data.add(i);
+            let element = &*ptr;
+            return element;
+        }
     }
 
     // Student 2 should implement this.
