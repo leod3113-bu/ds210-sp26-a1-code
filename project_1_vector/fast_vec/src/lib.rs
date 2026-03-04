@@ -62,7 +62,7 @@ impl<T> FastVec<T> {
     // Use the project handout as a guide for this part!
     pub fn get(&self, i: usize) -> &T {
         if i >= self.len {
-            panic!("Index out of bounds!");
+            panic!("FastVec: get out of bounds");
         }
         unsafe {
             let ptr = self.ptr_to_data.add(i);
@@ -84,7 +84,7 @@ impl<T> FastVec<T> {
     pub fn remove(&mut self, i: usize) {
         // checks length, don't remove out of bounds
         if i >= self.len {
-            panic!("Index out of bounds!");
+            panic!("FastVec: remove out of bounds");
         }
 
         // does the cool magic :>
@@ -95,17 +95,16 @@ impl<T> FastVec<T> {
             
             // shifts the rest of the elements one to the left
             for j in i + 1..self.len {
-                let ptr_before = self.ptr_to_data.add(j - 1);
-                let ptr_shift = self.ptr_to_data.add(j);
-                let element = ptr::read(ptr_shift);
-                ptr::write(ptr_before, element);
+                let old_ptr = self.ptr_to_data.add(j);
+                let new_ptr = self.ptr_to_data.add(j - 1);
+                let element = ptr::read(old_ptr);
+                ptr::write(new_ptr, element);
             }
 
         }
 
         // decrements the length to reflect the new length
         self.len -= 1;
-
     }
 
     // This appears correct but with further testing, you will notice it has a bug!
