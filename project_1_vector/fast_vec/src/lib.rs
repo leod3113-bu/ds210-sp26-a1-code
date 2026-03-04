@@ -82,7 +82,18 @@ impl<T> FastVec<T> {
 
     // Student 1 should implement this.
     pub fn remove(&mut self, i: usize) {
-        todo!("implement remove");
+        if i >= self.len {
+            panic!("Index out of bounds!");
+        }
+
+        unsafe {
+            let ptr_remove = self.ptr_to_data.add(i);
+            ptr::read(ptr_remove);
+        }
+
+        for j in i + 1..self.len {
+            
+        }
     }
 
     // This appears correct but with further testing, you will notice it has a bug!
