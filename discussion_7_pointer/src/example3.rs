@@ -5,11 +5,11 @@ fn main() {
     // let mut ptr = std::ptr::null();
 
     // TODO: try with my_var = 1, 2, and 3.
-    let my_var = 1;
+    let my_var = 3;
 
     let x1 = String::from("Hello");
+    let x2 = String::from("Goodbye");
     if my_var < 2 {
-        let x2 = String::from("Goodbye");
         if my_var == 1 {
             ptr = &x2 as *const String;
         }
