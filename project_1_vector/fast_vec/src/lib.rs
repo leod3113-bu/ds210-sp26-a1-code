@@ -73,11 +73,30 @@ impl<T> FastVec<T> {
 
     // Student 2 should implement this.
     pub fn push(&mut self, t: T) {
+    
         if self.len == self.capacity {
-            todo!("implement growing the vector by doubling the size!");
-        } else {
-            todo!("implement pushing t directly since the vector still has capacity!");
-        }
+            let old_ptr_data = self.ptr_to_data; //makes it easier for me to understand this is old data
+                let new_ptr_to_data= MALLOC.malloc(size_of::<T>() * self.capacity*2) as *mut T; // Allocate new data
+                unsafe{
+                    for i in 0..self.len {
+                        let old_ptr = old_ptr_data.add(i); // pointer of the old data
+                        let element = old_ptr.read(); // we take out the old data info and put it into element
+                        let new_ptr = new_ptr_to_data.add(i); // pointer to the new allocated data same indexing as old
+                        new_ptr.write(element) // give the new pointer the same value as the old pointer
+                    }
+                }   
+                MALLOC.free(old_ptr_data as *mut u8);
+                self.ptr_to_data = new_ptr_to_data;
+                self.capacity *= 2
+            
+        } 
+        
+        unsafe{
+                let new_element_ptr = self.ptr_to_data.add(self.len); 
+                new_element_ptr.write(t);
+                self.len +=1;
+
+            }
     }
 
     // Student 1 should implement this.
