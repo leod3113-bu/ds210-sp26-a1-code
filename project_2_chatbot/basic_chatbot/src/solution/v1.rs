@@ -15,23 +15,18 @@ impl ChatbotV1 {
     pub async fn chat_with_user(&mut self, message: String) -> String {
         let mut chat_session: Chat<Llama> = self.model
             .chat()
-            .with_system_prompt("The assistant will act like a pirate");
+            .with_system_prompt("The assistant will act like Luffy from One Piece");
 
         // You need to add your code here
         // You must find a way to add the given message to the chat_session!
         // consider https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.add_message
         // Hint: make sure you transform/extract the response message as a **String**.
 
-        // return String::from("Hello, I am not a bot (yet)!");
+        let asynchronous_output = chat_session.add_message(message); //this is kinda like a work in progress out put that gets wrapped
+        let output = asynchronous_output.await;
+// notice lack of (), await is not a function; it is a special keyword!
 
-        // appends the user message to the context
-        let context = chat_session.add_message(message);
-
-        // creates the response
-        let output = context.await;
-        return match output {
-            Ok(response) => response,
-            Err(error) => panic!("{error}")
-        }
+        return output.unwrap();
+        
     }
 }
