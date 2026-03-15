@@ -22,6 +22,16 @@ impl ChatbotV1 {
         // consider https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.add_message
         // Hint: make sure you transform/extract the response message as a **String**.
 
-        return String::from("Hello, I am not a bot (yet)!");
+        // return String::from("Hello, I am not a bot (yet)!");
+
+        // appends the user message to the context
+        let context = chat_session.add_message(message);
+
+        // creates the response
+        let output = context.await;
+        return match output {
+            Ok(response) => response,
+            Err(error) => panic!("{error}")
+        }
     }
 }
