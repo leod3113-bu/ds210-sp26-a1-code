@@ -22,11 +22,12 @@ impl ChatbotV1 {
         // consider https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.add_message
         // Hint: make sure you transform/extract the response message as a **String**.
 
-        let asynchronous_output = chat_session.add_message(message); //this is kinda like a work in progress out put that gets wrapped
+        // this is kinda like a work in progress out put that gets wrapped
+        let asynchronous_output = chat_session.add_message(message);
+        
+        // notice lack of (), await is not a function; it is a special keyword!
         let output = asynchronous_output.await;
-// notice lack of (), await is not a function; it is a special keyword!
 
         return output.unwrap();
-        
     }
 }
