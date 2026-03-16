@@ -15,7 +15,7 @@ impl ChatbotV1 {
     pub async fn chat_with_user(&mut self, message: String) -> String {
         let mut chat_session: Chat<Llama> = self.model
             .chat()
-            .with_system_prompt("The assistant will act like Luffy from One Piece");
+            .with_system_prompt("The assistant will act like a pirate");
 
         // You need to add your code here
         // You must find a way to add the given message to the chat_session!
