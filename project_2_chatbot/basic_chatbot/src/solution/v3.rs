@@ -77,7 +77,7 @@ impl ChatbotV3 {
             Some(chat_session) => {
                 // we get its history, iterate over it and pull the contents, and return it as a vector
                 // with credits: https://stackoverflow.com/questions/30026893/how-to-use-a-map-over-vectors
-                let history = chat_session.session().unwrap().history();
+                let history = &chat_session.session().unwrap().history()[1..];
                 return history.iter().map(|chat_message| String::from(chat_message.content())).collect();
             },
 
