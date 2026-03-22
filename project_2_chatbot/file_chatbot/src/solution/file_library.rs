@@ -12,8 +12,19 @@ use std::fs;
 
 // Implement this
 pub fn save_chat_session_to_file(filename: &str, session: &LlamaChatSession) {
-    // look at fs::write(...)
-    unimplemented!("Saving chat session to file {filename}");
+    // Pulls bytes from session
+    let bytes = session.to_bytes();
+    if bytes.is_err() {
+        // Panics if bytes is not ok
+        panic!("Failed to retrieve bytes from chat session!");
+    }
+    
+    // Tries write action
+    let write = fs::write(filename, bytes.unwrap());
+    if write.is_err() {
+        // Panics if write is not successful
+        panic!("Failed to save chat session to file {}!", filename);
+    }
 }
 
 // Implement this
