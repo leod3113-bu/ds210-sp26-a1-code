@@ -25,6 +25,7 @@ pub fn save_chat_session_to_file(filename: &str, session: &LlamaChatSession) {
         // Panics if write is not successful
         panic!("Failed to save chat session to file {}!", filename);
     }
+    write.unwrap();
 }
 
 // Implement this
