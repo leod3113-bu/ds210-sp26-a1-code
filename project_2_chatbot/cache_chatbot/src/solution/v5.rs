@@ -24,16 +24,17 @@ impl ChatbotV5 {
             None => { 
                 let mut new_chat = self.model.chat().with_system_prompt("Act like luffy from one piece"); // if there is no session file we create a new bot
                 let session_file= file_library::load_chat_session_from_file(filename); // we try download session file 
-                 if session_file.is_some() {
-                      new_chat = new_chat.with_session(session_file.unwrap());  // the new chat we create we uploade it with the information from the file
+                if session_file.is_some() {
+                    new_chat = new_chat.with_session(session_file.unwrap());  // the new chat we create we uploade it with the information from the file
                 }
-            return new_chat.add_message(message).await.unwrap();
+                let output = new_chat.add_message(message).await.unwrap();
+                self.cache.insert_chat(username, new_chat);
+                return output;
             }
             Some(existing_chat) => {
                 println!("chat_with_user: {username} is in the cache! Nice!");
-                let output_cache = existing_chat.add_message(message).await; // We want to continue the chat with the user. 
-                return output_cache.unwrap();
-
+                let output = existing_chat.add_message(message).await.unwrap(); // We want to continue the chat with the user.
+                return output;
             }
         }
     }
