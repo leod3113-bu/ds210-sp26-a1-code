@@ -28,12 +28,14 @@ impl ChatbotV5 {
                     new_chat = new_chat.with_session(session_file.unwrap());  // the new chat we create we uploade it with the information from the file
                 }
                 let output = new_chat.add_message(message).await.unwrap();
+                file_library::save_chat_session_to_file(filename, &new_chat.session().unwrap()); // we save the state to the file
                 self.cache.insert_chat(username, new_chat);
                 return output;
             }
             Some(existing_chat) => {
                 println!("chat_with_user: {username} is in the cache! Nice!");
                 let output = existing_chat.add_message(message).await.unwrap(); // We want to continue the chat with the user.
+                file_library::save_chat_session_to_file(filename, &existing_chat.session().unwrap()); // we save the state to the file
                 return output;
             }
         }

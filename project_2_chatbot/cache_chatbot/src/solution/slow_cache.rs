@@ -1,5 +1,7 @@
 use std::{collections::HashMap, fmt::Debug};
 
+use file_chatbot::solution::file_library;
+
 pub struct Cache<V> {
     max_size: usize,
     hashmap: HashMap<String, V>,
