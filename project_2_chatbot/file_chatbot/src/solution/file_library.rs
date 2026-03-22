@@ -29,9 +29,13 @@ pub fn save_chat_session_to_file(filename: &str, session: &LlamaChatSession) {
 
 // Implement this
 pub fn load_chat_session_from_file(filename: &str) -> Option<LlamaChatSession> {
-    let chat_file= fs::read (filename).unwrap(); // read funtion returns a Result Vec<u8> so we have to unwrap the Result
+    let chat_file= fs::read (filename);
+     // read funtion returns a Result Vec<u8> so we have to unwrap the Result
     // look at fs::read(...)
     // also look at
+    if chat_file.is_err(){
+        return None
+    }
     let session_load= LlamaChatSession::from_bytes(&chat_file);
     return match session_load {
         Ok(session) => Some(session), // Ok grabs the result and turns it into a session which is then wrapped again as an option
