@@ -84,10 +84,10 @@ impl<V> Cache<V> {
     // 1. What if cache is at capacity?
     // 2. What should be the most recently used chat after this insertion?
     pub fn insert_chat(&mut self, username: String, chat: V) {
-        println!("Insert {username} into cache:");
-        println!("Cache before inserting: -----");
-        println!("{:?}", self);
-        println!("-----------------------------");
+        // println!("Insert {username} into cache:");
+        // println!("Cache before inserting: -----");
+        // println!("{:?}", self);
+        // println!("-----------------------------");
 
         self.hashmap.insert(username.clone(), chat);
         self.mark_as_most_recently_used(username);
@@ -95,9 +95,9 @@ impl<V> Cache<V> {
             self.remove_least_recently_used();
         }
 
-        println!("Cache after inserting: ------");
-        println!("{:?}", self);
-        println!("-----------------------------");
+        // println!("Cache after inserting: ------");
+        // println!("{:?}", self);
+        // println!("-----------------------------");
     }
 }
 
