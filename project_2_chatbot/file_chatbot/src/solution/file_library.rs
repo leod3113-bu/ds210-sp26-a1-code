@@ -36,7 +36,7 @@ pub fn load_chat_session_from_file(filename: &str) -> Option<LlamaChatSession> {
     if chat_file.is_err(){
         return None
     }
-    let session_load= LlamaChatSession::from_bytes(&chat_file);
+    let session_load= LlamaChatSession::from_bytes(&chat_file.unwrap());
     return match session_load {
         Ok(session) => Some(session), // Ok grabs the result and turns it into a session which is then wrapped again as an option
 
