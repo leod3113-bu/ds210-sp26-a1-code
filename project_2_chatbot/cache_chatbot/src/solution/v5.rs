@@ -36,22 +36,49 @@ impl ChatbotV5 {
     }
 
     pub fn get_history(&mut self, username: String) -> Vec<String> {
+        // Initializes chat fetching
         let filename = &format!("{}.txt", username);
         let cached_chat = self.cache.get_chat(&username);
 
+        // Tries to fetch the chat from cache
         match cached_chat {
+            // On cache miss
             None => {
-                println!("get_history: {username} is not in the cache!");
-                // TODO: The cache does not have the chat. What should you do?
-                // Your code goes here.
-                return Vec::new();
-            }
-            Some(chat_session) => {
-                println!("get_history: {username} is in the cache! Nice!");
-                // TODO: The cache has this chat. What should you do?
-                // Your code goes here.
-                return Vec::new();
+                // Uses the file library to load the history from string
+                let session_attempt = file_library::load_chat_session_from_file(filename);
+                
+                // If the session does not exist previously, we return an empty history
+                if session_attempt.is_none() {
+                    return Vec::new();
+                }
 
+                // If it does, we grab the session
+                let session = session_attempt.unwrap();
+
+                // Pulls the history from the session, slicing 1 to ignore system prompt
+                let history = &session.history()[1..];
+
+                // Maps the history to get the content strings
+                let contents = history.iter().map(|msg| String::from(msg.content())).collect();
+                
+                // Returns contents
+                return contents;
+            }
+
+            // On cache hit
+            Some(chat_session) => {
+                // Pulls the session from the chat_session
+                println!("get_history: {username} is in the cache! Nice!");
+                let session = chat_session.session().unwrap();
+                
+                // Pulls the history from the session, slicing 1 to ignore system prompt
+                let history = &session.history()[1..];
+
+                // Maps the history to get the content strings
+                let contents = history.iter().map(|msg| String::from(msg.content())).collect();
+                
+                // Returns contents
+                return contents;
             }
         }
     }
