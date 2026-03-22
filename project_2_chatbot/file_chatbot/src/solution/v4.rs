@@ -35,6 +35,11 @@ impl ChatbotV4 {
             // Panics if it failed to generate
             panic!("Failed to generate output!");
         }
+        else {
+            // Else save the session to the file
+            let session = &chat_session.session().unwrap();
+            file_library::save_chat_session_to_file(filename, session);
+        }
         return output.unwrap();
     }
 
