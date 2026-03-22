@@ -37,7 +37,31 @@ impl<V> Cache<V> {
     }
     fn mark_as_most_recently_used(&mut self, username: String) {
         // TODO: your code goes here.
-        // println!("Marking {username} as most recently used");
+        println!("Marking {username} as most recently used");
+
+        // Creates new usage history for copy
+        let mut new_usage_history = Vec::new();
+
+        // Pushes existing usernames, ignore it if it already exists so we can pump it to the end
+        for existing_username in &self.usage_history {
+            if existing_username.cmp(&username) == std::cmp::Ordering::Equal {
+                continue;
+            }
+            new_usage_history.push(existing_username.clone());
+        }
+
+        // Pushes new username to the end
+        new_usage_history.push(username.clone());
+
+        // Updates usage history with the new one
+        // Essentially
+        // No Repeat:
+        // [ 1, 2, 3 ] (Add 4)
+        // [ 1, 2, 3, 4 ] (Append 4 to the end)
+        // With Repeat:
+        // [ 1, 2, 3 ] (Bump 2)
+        // [ 1, 3, 2 ] (We cloned, ignoring existing 2, and push 2 at the end)
+        self.usage_history = new_usage_history;
     }
 
     // Reading from the cache:
