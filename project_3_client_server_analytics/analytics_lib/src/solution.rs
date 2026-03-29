@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use crate::dataset::{ColumnType, Dataset, Value, Row};
 use crate::query::{Aggregation, Condition, Query};
 
@@ -80,9 +80,61 @@ pub fn group_by_dataset(dataset: Dataset, group_by_column: &String) -> HashMap<V
     // Returns new hashmap
     return grouped_hashmap;
 }
+// helper function
+pub fn get_unique_dataset(dataset: &Dataset, column_index: usize) -> HashSet<&Value>{
+    dataset
+        .iter()// get rows
+        .map(|row| row.get_value(column_index)).collect()
+}
 
+pub fn sum_integer_dataset(dataset: &Dataset, column_index: usize) -> i32{
+    dataset
+        .iter()// get rows
+        .map(|row| match row.get_value(column_index) {
+            Value::Integer(value_data) => value_data,
+            Value::String(_) => panic!("Not a string"),
+        })
+        .sum()
+}
+
+pub fn sum_string_dataset(dataset: &Dataset, column_index: usize) -> String{
+    dataset
+        .iter()// get rows
+        .map(|row| match row.get_value(column_index) {
+            Value::Integer(_) => panic!("Not a string"),
+            Value::String(value_data) => value_data,
+        }) 
+        .fold(String::new(),|mut string_builder, value_data| {
+            string_builder.push_str(value_data);
+            string_builder
+        })
+}
 pub fn aggregate_dataset(dataset: HashMap<Value, Dataset>, aggregation: &Aggregation) -> HashMap<Value, Value> {
-    todo!("Implement this!");
+    let mut aggregated_hashmap = HashMap::new();
+    match aggregation{
+        Aggregation::Count(column_name) => {
+            for(group_name, group_dataset) in dataset.iter() {
+                let column_index = group_dataset.column_index(column_name);
+                let unique = get_unique_dataset(group_dataset, column_index);
+                aggregated_hashmap.insert(group_name.clone(),Value::Integer(unique.len() as i32));
+            }
+        }    
+        Aggregation::Sum(column_name) => {
+            for(group_name, group_dataset) in dataset.iter(){
+                let column_index = group_dataset.column_index(column_name);
+                let sum = sum_integer_dataset(group_dataset, column_index);
+                aggregated_hashmap.insert(group_name.clone(), Value::Integer(sum));
+            }
+        }
+        Aggregation::Average(column_name) => {
+            for(group_name, group_dataset) in dataset.iter(){
+                let column_index = group_dataset.column_index(column_name);
+                let sum = sum_integer_dataset(group_dataset, column_index);
+                aggregated_hashmap.insert(group_name.clone(), Value::Integer(sum/group_dataset.len() as i32));
+            }
+        }
+    }
+    return aggregated_hashmap;    
 }
 
 pub fn compute_query_on_dataset(dataset: &Dataset, query: &Query) -> Dataset {
