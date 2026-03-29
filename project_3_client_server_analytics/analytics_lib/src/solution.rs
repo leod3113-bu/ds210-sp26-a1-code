@@ -80,57 +80,75 @@ pub fn group_by_dataset(dataset: Dataset, group_by_column: &String) -> HashMap<V
     // Returns new hashmap
     return grouped_hashmap;
 }
+
 // helper function
-pub fn get_unique_dataset(dataset: &Dataset, column_index: usize) -> HashSet<&Value>{
+pub fn get_unique_dataset(dataset: &Dataset, column_index: usize) -> HashSet<&Value> {
     dataset
-        .iter()// get rows
-        .map(|row| row.get_value(column_index)).collect()
+        .iter()  // Turn the dataset into an iter
+        .map(|row| row.get_value(column_index))  // Read the data value
+        .collect()  // And then collect it into a hashset to eliminate duplicates
 }
 
 pub fn sum_integer_dataset(dataset: &Dataset, column_index: usize) -> i32{
     dataset
-        .iter()// get rows
+        .iter()// Turn the dataset into an iter
         .map(|row| match row.get_value(column_index) {
-            Value::Integer(value_data) => value_data,
-            Value::String(_) => panic!("Not a string"),
+            Value::Integer(value_data) => value_data,  // Read value data if it is an integer
+            Value::String(_) => panic!("Not a integer"),  // Panic if it is a string
         })
-        .sum()
+        .sum()  // And then get the sum
 }
 
 pub fn sum_string_dataset(dataset: &Dataset, column_index: usize) -> String{
     dataset
-        .iter()// get rows
+        .iter()// Turn the dataset into an iter
         .map(|row| match row.get_value(column_index) {
-            Value::Integer(_) => panic!("Not a string"),
-            Value::String(value_data) => value_data,
+            Value::Integer(_) => panic!("Not a string"),  // Panic if it is an integer
+            Value::String(value_data) => value_data,  // Read value data if it is a string
         }) 
         .fold(String::new(),|mut string_builder, value_data| {
-            string_builder.push_str(value_data);
-            string_builder
+            string_builder.push_str(value_data);  // Push the string into the string builder
+            string_builder  // Return the string builder for the next iteration
         })
 }
 pub fn aggregate_dataset(dataset: HashMap<Value, Dataset>, aggregation: &Aggregation) -> HashMap<Value, Value> {
+    // Create a new empty hashmap
     let mut aggregated_hashmap = HashMap::new();
-    match aggregation{
+    match aggregation {
+        // For the count method
         Aggregation::Count(column_name) => {
             for(group_name, group_dataset) in dataset.iter() {
                 let column_index = group_dataset.column_index(column_name);
+
+                // Get the unique elements under the column
                 let unique = get_unique_dataset(group_dataset, column_index);
+
+                // Insert the unique hashset length as the count
                 aggregated_hashmap.insert(group_name.clone(),Value::Integer(unique.len() as i32));
             }
-        }    
+        }
+
+        // For the sum method
         Aggregation::Sum(column_name) => {
             for(group_name, group_dataset) in dataset.iter(){
                 let column_index = group_dataset.column_index(column_name);
+                
+                // Get the integer sum
                 let sum = sum_integer_dataset(group_dataset, column_index);
+                
+                // Insert the sum as the result
                 aggregated_hashmap.insert(group_name.clone(), Value::Integer(sum));
             }
         }
         Aggregation::Average(column_name) => {
             for(group_name, group_dataset) in dataset.iter(){
                 let column_index = group_dataset.column_index(column_name);
+
+                // Get the string sum
                 let sum = sum_integer_dataset(group_dataset, column_index);
-                aggregated_hashmap.insert(group_name.clone(), Value::Integer(sum/group_dataset.len() as i32));
+
+                // Insert the sum as the result
+                aggregated_hashmap.insert(group_name.clone(), Value::Integer(sum / group_dataset.len() as i32));
             }
         }
     }
