@@ -24,3 +24,4 @@ serde_json = "1.0"
 analytics_lib = { path = "../analytics_lib" }
 interface = { path = "../interface" }
 futures = "0.3.32"
+regex = "1.12.3"
