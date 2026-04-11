@@ -1,9 +1,39 @@
+use std::collections::HashMap;
+
 use tic_tac_toe_stencil::agents::Agent;
 use tic_tac_toe_stencil::board::Board;
 use tic_tac_toe_stencil::player::Player;
 
 // Your solution solution.
-pub struct SolutionAgent {}
+pub struct SolutionAgent {
+    states: HashMap<String, Board>
+}
+
+impl SolutionAgent {
+    pub fn new() -> SolutionAgent {
+        return SolutionAgent { states: HashMap::new() };
+    }
+
+    pub fn getState(board: &Board) -> Board {
+        
+    }
+
+    pub fn getShape(board: &Board) -> String {
+
+    }
+
+    pub fn hashBoard(board: &Board) -> String {
+
+    }
+
+    pub fn rotateBoard(board: &Board) -> Board {
+
+    }
+
+    pub fn flipBoard(board: &Board) -> Board {
+
+    }
+}
 
 // Put your solution here.
 impl Agent for SolutionAgent {
