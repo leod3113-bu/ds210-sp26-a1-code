@@ -22,7 +22,24 @@ pub fn has_shape(states: &HashMap<String, Board>, board: &Board) -> bool {
 
 // Converts the board into a string notation
 pub fn hash_board(board: &Board) -> String {
-    todo!("smth");
+    let two_d_map = board.get_cells();
+    let mut hash_brown_fries = String::new();
+
+    for vector in two_d_map {
+        for cell in vector{
+            match cell{
+                Cell::X => hash_brown_fries.push_str("X"),
+                Cell::O => hash_brown_fries.push_str("O"),
+                Cell::Empty =>hash_brown_fries.push_str("_"),
+               _=> panic!("Invalid cell!")
+            }
+
+        }
+    }
+    hash_brown_fries // and some ketchup and mickidies!!
+
+
+
 }
 
 // Rotates board clock-wise
