@@ -45,9 +45,6 @@ pub fn hash_board(board: &Board) -> String {
         }
     }
     hash_brown_fries // and some ketchup and mickidies!!
-
-
-
 }
 
 // Rotates board clock-wise
