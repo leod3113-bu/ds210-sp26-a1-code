@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use tic_tac_toe_stencil::agents::Agent;
 use tic_tac_toe_stencil::board::{Board, Cell};
@@ -10,14 +10,22 @@ use crate::layout::Layout3x3;
 // Your solution solution.
 pub struct SolutionAgent {}
 
-// Pulls the board (or self if none) from the states hashmap
-pub fn get_shape(states: &HashMap<String, Board>, board: &Board) -> String {
-    todo!("smth");
-}
-
 // Checks if the states hashmap has a similar shape of self via transposition
-pub fn has_shape(states: &HashMap<String, Board>, board: &Board) -> bool {
-    todo!("smth");
+pub fn has_shape(shapes: &HashSet<String>, board: &Board) -> bool {
+    if shapes.contains(&hash_board(board)) {return true;}
+
+    let mut mut_board = rotate_board(board);
+    for _ in 0..4 {
+    if shapes.contains(&hash_board(&mut_board)) {return true;} // Rotating 360 degrees and 'snapshotting' and checking if composition already exists
+    mut_board = rotate_board(&mut_board);
+    }
+
+    mut_board= flip_board(&mut_board);
+    for _ in 0..4{
+        if shapes.contains(&hash_board(&mut_board)) {return true;} // We can do the exact same steps as before
+        mut_board = rotate_board(&mut_board);
+    }
+    false
 }
 
 // Converts the board into a string notation
@@ -43,7 +51,7 @@ pub fn hash_board(board: &Board) -> String {
 }
 
 // Rotates board clock-wise
-pub fn rotate_roard(board: &Board) -> Board {
+pub fn rotate_board(board: &Board) -> Board {
     let cells = board.get_cells();
     let mut rotated = Board::new(Layout3x3 {});
     for y in 0..cells.len() {
