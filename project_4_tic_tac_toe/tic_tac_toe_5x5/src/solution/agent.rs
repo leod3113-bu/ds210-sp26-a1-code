@@ -20,41 +20,6 @@ impl Agent for SolutionAgent {
 }
 
 
-pub struct OurBoard{
-    height: usize,
-    with: usize,
-    size: usize,
-    center: (usize,usize),
-    indicesx: HashSet<usize>,
-    indiceso: HashSet<usize>,
-    availables: HashSet<usize>,
-    transpositions : HashMap<String,(usize,i32)>,
-    priorities :HashMap<String, usize>,
-    
-    oneshot: bool, //so we are within the matrtix
-    cells: Vec<OurCell>,
-    timeout: usize,
-    since: usize,
 
-    player: Player,
 
-    straks: (usize,usize),
-    progression: f32,
-    winner: Option<Player>,
-    gameover: bool, 
-}
 
-pub struct OurCell {
-    board: OurBoard,
-    index: usize,
-    point: (usize,usize),
-    neighbours: (
-
-        Option<Box<OurCell>>, Option<Box<OurCell>>, Option<Box<OurCell>>, Option<Box<OurCell>>,
-        Option<Box<OurCell>>, Option<Box<OurCell>>, Option<Box<OurCell>>, Option<Box<OurCell>>,
-        Option<Box<OurCell>>, Option<Box<OurCell>>, Option<Box<OurCell>>, Option<Box<OurCell>>,
-        Option<Box<OurCell>>, Option<Box<OurCell>>, Option<Box<OurCell>>, Option<Box<OurCell>>,
-    ),
-    value: Cell,
-    streaks: (usize,usize),
-}
