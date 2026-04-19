@@ -1,5 +1,6 @@
+use core::f32;
 use std::{collections::{HashMap, HashSet}, time::SystemTime};
-use tic_tac_toe_stencil::player::Player;
+use tic_tac_toe_stencil::{board::Cell, player::Player};
 use crate::solution::luffy_cell::LuffyCell;
 
 pub struct LuffyBoard {
@@ -45,7 +46,28 @@ pub struct LuffyBoard {
 
 impl LuffyBoard {
     pub fn evaluate_heuristics(&self) -> f32 {
-        0.0
+        if self.gameover {
+            return match self.winner {
+                Some(winner) => match winner {
+                    Player::X => f32::INFINITY,
+                    Player::O => f32::NEG_INFINITY
+                },
+                None => 0.0
+            }     
+        }
+    
+        let mut x_streaks = 0;
+        for index in &self.indices_x {
+            let cell = &self.cells[*index];
+            x_streaks += cell.streaks.0;
+        }
+
+        let mut o_streaks = 0;
+        for index in &self.indices_o {
+            let cell = &self.cells[*index];
+            o_streaks += cell.streaks.1;
+        }
+        return (x_streaks - o_streaks) as f32;
     }
 
     pub fn generate_moves(&mut self) -> Vec<usize> {
