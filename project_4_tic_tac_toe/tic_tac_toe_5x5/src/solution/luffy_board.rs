@@ -1,66 +1,97 @@
-use std::collections::{HashMap, HashSet};
+use std::{collections::{HashMap, HashSet}, time::SystemTime};
 use tic_tac_toe_stencil::player::Player;
 use crate::solution::luffy_cell::LuffyCell;
 
 pub struct LuffyBoard {
     // Size
-    height: usize,
-    with: usize,
-    size: usize,
+    pub height: usize,
+    pub with: usize,
+    pub size: usize,
 
     // Center
-    center: (usize, usize),
+    pub center: (usize, usize),
 
     // Indices lookups
-    indices_x: HashSet<usize>,
-    indices_o: HashSet<usize>,
-    availables: HashSet<usize>,
+    pub indices_x: HashSet<usize>,
+    pub indices_o: HashSet<usize>,
+    pub availables: HashSet<usize>,
 
     // Transpositions (Repeated Board Positions)
-    transpositions: HashMap<String, (usize, f32)>,
+    pub transpositions: HashMap<String, (usize, f32)>,
 
     // Priorities (Last Best Moves)
-    priorities: HashMap<String, usize>,
+    pub priorities: HashMap<String, usize>,
     
     // Oneshot
-    oneshot: bool, // One Streak = Win for 3x3
+    pub oneshot: bool, // One Streak = Win for 3x3
     
     // Cells
-    cells: Vec<LuffyCell>,
+    pub cells: Vec<LuffyCell>,
 
     // Timeout for Cutoffs
-    timeout: u64,
-    since: u64,
+    pub timeout: u64,
+    pub since: SystemTime,
 
     // Current Player
-    player: Player,
+    pub player: Player,
     
     // Player Scores
-    streaks: (u64, u64),
+    pub streaks: (u64, u64),
 
     // Game Terminal States
-    winner: Option<Player>,
-    gameover: bool
+    pub winner: Option<Player>,
+    pub gameover: bool
 }
 
 impl LuffyBoard {
-    fn evaluate_heuristics(&self) -> f32 {
+    pub fn evaluate_heuristics(&self) -> f32 {
         0.0
     }
 
-    fn generate_moves(&mut self) -> Vec<usize> {
+    pub fn generate_moves(&mut self) -> Vec<usize> {
         vec![]
     }
 
-    fn iterative_search(&mut self, plies: u64) -> (usize, f32) {
-        (0, 0.0)
+    pub fn iterative_search(&mut self, plies: u64) -> (usize, f32) {
+        // Panics if game over
+        if self.gameover {
+            panic!("The game is over... There are no legal moves left to search.");
+        }
+
+        // Finds best move
+        self.since = SystemTime::now();
+        let mut best = None;
+        let mut eval = 0.0;
+        for depth in 0..(plies * 2) {
+            // Cancels if timed out
+            let elapsed = SystemTime::now().duration_since(self.since).unwrap().as_secs();
+            if elapsed > self.timeout {
+                break;
+            }
+
+            // Clears transposition between each search
+            self.transpositions.clear();
+
+            // Updates best result
+            let best_result = self.find_best_move(f32::INFINITY, -f32::INFINITY, depth);
+            best = Some(best_result.0);
+            eval = best_result.1;
+        }
+
+        // Returns best result
+        (best.unwrap(), eval)
     }
 
-    fn find_best_move(mut alpha: f32, mut beta: f32, depth: u64) -> (usize, f32) {
+    pub fn find_best_move(&mut self, mut alpha: f32, mut beta: f32, depth: u64) -> (usize, f32) {
         (0, 0.0)
+
     }
 
-    fn notate() -> String {
-        String::new()
+    pub fn notate(&self) -> String {
+        let mut notation = String::new();
+        for cell in &self.cells {
+            notation.push(cell.notate());
+        }
+        notation
     }
 }

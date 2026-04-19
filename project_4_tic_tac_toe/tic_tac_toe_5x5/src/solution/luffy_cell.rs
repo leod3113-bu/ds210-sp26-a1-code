@@ -3,14 +3,14 @@ use crate::solution::luffy_board::LuffyBoard;
 
 pub struct LuffyCell {
     // Board
-    board: LuffyBoard,
+    pub board: LuffyBoard,
 
     // Index
-    index: usize,
-    point: (usize, usize),
+    pub index: usize,
+    pub point: (usize, usize),
 
     // Neighbors
-    neighbours: (
+    pub neighbours: (
         Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>,
         Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>,
         Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>,
@@ -18,26 +18,26 @@ pub struct LuffyCell {
     ),
 
     // Value of Cell
-    value: Cell,
+    pub value: Cell,
 
     // Scores for Cell
-    streaks: (usize, usize)
+    pub streaks: (usize, usize)
 }
 
 impl LuffyCell {
-    fn initialize_neighbors(&mut self) {
+    pub fn initialize_neighbors(&mut self) {
 
     }
 
-    fn update_relations(&mut self) {
+    pub fn update_relations(&mut self) {
 
     }
 
-    fn update_value(&mut self) {
+    pub fn update_value(&mut self) {
 
     }
 
-    fn notate(&self) -> char {
+    pub fn notate(&self) -> char {
         match self.value {
             Cell::X => 'x',
             Cell::O => 'o',
