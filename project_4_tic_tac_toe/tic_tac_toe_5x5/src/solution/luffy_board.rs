@@ -15,29 +15,32 @@ pub struct LuffyBoard {
     // Indices lookups
     pub indices_x: HashSet<usize>,
     pub indices_o: HashSet<usize>,
-    pub availables: HashSet<usize>,
+    pub indices_empty: HashSet<usize>,
 
     // Transpositions (Repeated Board Positions)
-    pub transpositions: HashMap<String, (usize, f32)>,
+    pub transpositions: HashMap<String, f32>,
 
     // Priorities (Last Best Moves)
     pub priorities: HashMap<String, usize>,
     
     // Oneshot
-    pub oneshot: bool, // One Streak = Win for 3x3
+    pub classic: bool, // One Streak = Win for 3x3
     
     // Cells
     pub cells: Vec<LuffyCell>,
 
-    // Timeout for Cutoffs
-    pub timeout: u64,
-    pub since: SystemTime,
+    pub streaks_x: u64,
 
-    // Current Player
-    pub player: Player,
+    pub streaks_o: u64,
+
+    pub distance_x: f32, //to prioritize top left corners optimizes runtime
     
-    // Player Scores
-    pub streaks: (u64, u64),
+    pub distance_o: f32,
+    
+    pub entropy_x: f32, 
+
+    pub entropy_o: f32,
+
 
     // Game Terminal States
     pub winner: Option<Player>,
