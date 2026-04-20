@@ -6,7 +6,7 @@ use crate::solution::luffy_cell::LuffyCell;
 pub struct LuffyBoard {
     // Size
     pub height: usize,
-    pub with: usize,
+    pub width: usize,
     pub size: usize,
 
     // Center
@@ -59,18 +59,8 @@ impl LuffyBoard {
             }     
         }
     
-        let mut x_streaks = 0;
-        for index in &self.indices_x {
-            let cell = &self.cells[*index];
-            x_streaks += cell.streaks.0;
-        }
-
-        let mut o_streaks = 0;
-        for index in &self.indices_o {
-            let cell = &self.cells[*index];
-            o_streaks += cell.streaks.1;
-        }
-        return (x_streaks - o_streaks) as f32;
+        // Calculating the streak importance
+        (self.streaks_x.pow(2) - self.streaks_o.pow(2)) as f32 - ((self.entropy_x + self.distance_x / 4.0) - (self.entropy_o + self.distance_o / 4.0))
     }
 
     pub fn generate_moves(&mut self, player: Player) -> Vec<usize> {
