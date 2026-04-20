@@ -8,32 +8,37 @@ pub struct LuffyCell {
     // Index
     pub index: usize,
     pub point: (usize, usize),
-
-    // Neighbors
-    pub neighbours: (
-        Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>,
-        Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>,
-        Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>,
-        Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>,
-    ),
+    pub distance: f32,
+    pub entropy: f32,
 
     // Value of Cell
     pub value: Cell,
 
-    // Scores for Cell
-    pub streaks: (usize, usize)
+    // Neighbors
+    pub neighbours: (
+        Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>,
+        Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>, Option<Box<LuffyCell>>
+    ),
+
+    // Friends
+    pub friends_x: u64,
+    pub friends_o: u64,
+
+    // Streaks
+    pub streaks_x: u64,
+    pub streaks_o: u64
 }
 
 impl LuffyCell {
-    pub fn initialize_neighbors(&mut self) {
+    pub fn initialize(&mut self) {
 
     }
 
-    pub fn update_relations(&mut self) {
+    pub fn refresh(&mut self) {
 
     }
 
-    pub fn update_value(&mut self) {
+    pub fn update(&mut self, value: Value) {
 
     }
 

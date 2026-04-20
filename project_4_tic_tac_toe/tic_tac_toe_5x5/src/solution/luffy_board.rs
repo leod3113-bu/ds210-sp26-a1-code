@@ -17,28 +17,28 @@ pub struct LuffyBoard {
     pub indices_o: HashSet<usize>,
     pub indices_empty: HashSet<usize>,
 
-    // Transpositions (Repeated Board Positions)
+    // Transpositions (Position Evaluations)
     pub transpositions: HashMap<String, f32>,
 
-    // Priorities (Last Best Moves)
+    // Priorities (Position Best Moves)
     pub priorities: HashMap<String, usize>,
     
-    // Oneshot
-    pub classic: bool, // One Streak = Win for 3x3
+    // Classic Mode (Stop game at 1 three-in-a-row)
+    pub classic: bool,
     
     // Cells
     pub cells: Vec<LuffyCell>,
 
+    // Streaks (Number of three-in-a-rows)
     pub streaks_x: u64,
-
     pub streaks_o: u64,
 
-    pub distance_x: f32, //to prioritize top left corners optimizes runtime
-    
+    // Distance (Distance from Top Left)
+    pub distance_x: f32,
     pub distance_o: f32,
     
+    // Entropy (Distance from Center)
     pub entropy_x: f32, 
-
     pub entropy_o: f32,
 
 
@@ -73,11 +73,11 @@ impl LuffyBoard {
         return (x_streaks - o_streaks) as f32;
     }
 
-    pub fn generate_moves(&mut self) -> Vec<usize> {
+    pub fn generate_moves(&mut self, player: Player) -> Vec<usize> {
         vec![]
     }
 
-    pub fn iterative_search(&mut self, plies: u64) -> (usize, f32) {
+    pub fn iterative_search(&mut self, player: Player, plies: u64, timeout: u64) -> (usize, f32) {
         // Panics if game over
         if self.gameover {
             panic!("The game is over... There are no legal moves left to search.");
@@ -98,7 +98,7 @@ impl LuffyBoard {
             self.transpositions.clear();
 
             // Updates best result
-            let best_result = self.find_best_move(f32::INFINITY, -f32::INFINITY, depth);
+            let best_result = self.recursive_search(f32::INFINITY, -f32::INFINITY, depth);
             best = Some(best_result.0);
             eval = best_result.1;
         }
@@ -107,7 +107,7 @@ impl LuffyBoard {
         (best.unwrap(), eval)
     }
 
-    pub fn find_best_move(&mut self, mut alpha: f32, mut beta: f32, depth: u64) -> (usize, f32) {
+    pub fn recursive_search(&mut self, player: Player, mut alpha: f32, mut beta: f32, epoch: SystemTime, timeout: u64, depth: u64) -> (usize, f32) {
         (0, 0.0)
 
     }
