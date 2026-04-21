@@ -188,7 +188,7 @@ impl LuffyBoard {
                     // Checks opposite
                     let opposite = &cell_neighbors[direction + 4];
                     if opposite.is_none() { continue; }
-                    if neighbour.as_ref().unwrap().clone() != cell.value { continue; }
+                    if opposite.as_ref().unwrap().clone() != cell.value { continue; }
 
                     // Increments streaks
                     cell.streaks_x += 1;
@@ -204,7 +204,7 @@ impl LuffyBoard {
                     // Checks opposite
                     let opposite = &cell_neighbors[direction + 4];
                     if opposite.is_none() { continue; }
-                    if neighbour.as_ref().unwrap().clone() != cell.value { continue; }
+                    if opposite.as_ref().unwrap().clone() != cell.value { continue; }
 
                     // Increments streaks
                     cell.streaks_o += 1;
