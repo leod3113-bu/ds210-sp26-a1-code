@@ -1,10 +1,6 @@
-use tic_tac_toe_stencil::{board::Cell, player::Player};
-use crate::solution::luffy_board::LuffyBoard;
+use tic_tac_toe_stencil::{board::Cell};
 
-pub struct LuffyCell<'a> {
-    // Board
-    pub board: &'a mut LuffyBoard,
-
+pub struct LuffyCell {
     // Index
     pub index: usize,
     pub point: (usize, usize),
@@ -15,7 +11,7 @@ pub struct LuffyCell<'a> {
     pub value: Cell,
 
     // Neighbors
-    pub neighbours: Vec<Option<&'a mut LuffyCell<'a>>>,
+    pub neighbours: Vec<Option<usize>>,
 
     // Friends
     pub friends_x: u64,
@@ -26,112 +22,37 @@ pub struct LuffyCell<'a> {
     pub streaks_o: u64
 }
 
-impl<'a> LuffyCell<'a> {
-    pub fn initialize(&mut self) {
-        // Initializes neighbors
-        let left  = self.point.0 >=1;
-        let right = self.point.0 < self.board.width -1;
-        let up    = self.point.1 >=1;
-        let down  = self.point.1 < self.board.height -1;
-        self.neighbours[0] = if left  && up   { Some(&mut self.board.cells[self.index - self.board.width - 1]) } else{ None };
-        self.neighbours[1] = if          up   { Some(&mut self.board.cells[self.index - self.board.width]) }     else{ None };
-        self.neighbours[2] = if right && up   { Some(&mut self.board.cells[self.index - self.board.width + 1]) } else{ None };
-        self.neighbours[3] = if right         { Some(&mut self.board.cells[self.index + 1 ]) }                   else{ None };
-        self.neighbours[4] = if right && down { Some(&mut self.board.cells[self.index + self.board.width + 1]) } else{ None };
-        self.neighbours[5] = if          down { Some(&mut self.board.cells[self.index + self.board.width  ]) }   else{ None };
-        self.neighbours[6] = if left  && down { Some(&mut self.board.cells[self.index + self.board.width - 1]) } else{ None };
-        self.neighbours[7] = if left          { Some(&mut self.board.cells[self.index - 1 ]) }                   else{ None };
+impl LuffyCell {
+    pub fn new(width: usize, height: usize, center: (f32, f32), index: usize, value: Cell) -> Self {
+        // Parses coordinates
+        let x = (index as i32) % (width as i32);
+        let y = ((index as i32) - x) / (height as i32);
 
-        // Updates value
-        self.update(self.value);
-    }
+        // Creates cell
+        let cell = LuffyCell {
+            // Index
+            index: index,
+            point: (x as usize, y as usize),
+            distance: ((x.pow(2) + (y as i32).pow(2)) as f32).sqrt(),
+            entropy: (((x as f32) - center.0).powf(2.0) + ((y as f32) - center.1).powf(2.0)).sqrt(),
 
-    pub fn refresh(&mut self) {
-        // Refreshes friends
-        self.friends_x = 0;
-        self.friends_o = 0;
-        for i in 0..8 {
-            let neighbour = &self.neighbours[i];
-            match neighbour {
-                Some(cell) => match cell.value {
-                    Cell::X => { self.friends_x += 1; },
-                    Cell::O => { self.friends_o += 1; }
-                    _ => ()
-                },
-                None => continue
-            }
-        }
+            // Value
+            value: value,
 
-        // Refreshes streaks
-        self.board.streaks_x -= self.streaks_x;
-        self.board.streaks_o -= self.streaks_o;
-        self.streaks_x = 0;
-        self.streaks_o = 0;
-        match self.value {
-            Cell::X => {
-                for i in 0..4 {
-                    // Checks neighbor
-                    let neighbour = &self.neighbours[i];
-                    if neighbour.is_none() { continue; }
-                    if neighbour.as_ref().unwrap().value != self.value { continue; }
+            // Neighbors
+            neighbours: Vec::with_capacity(8),
 
-                    // Checks opposite
-                    let opposite = &self.neighbours[i + 4];
-                    if opposite.is_none() { continue; }
-                    if opposite.as_ref().unwrap().value != self.value { continue; }
+            // Friends
+            friends_x: 0,
+            friends_o: 0,
 
-                    // Increments streaks
-                    self.board.streaks_x += 1;
-                    self.streaks_x += 1;
-                }
-            },
-            Cell::O => {
-                for i in 0..4 {
-                    // Checks neighbor
-                    let neighbour = &self.neighbours[i];
-                    if neighbour.is_none() { continue; }
-                    if neighbour.as_ref().unwrap().value != self.value { continue; }
+            // Streaks
+            streaks_x: 0,
+            streaks_o: 0
+        };
 
-                    // Checks opposite
-                    let opposite = &self.neighbours[i + 4];
-                    if opposite.is_none() { continue; }
-                    if opposite.as_ref().unwrap().value != self.value { continue; }
-
-                    // Increments streaks
-                    self.board.streaks_o += 1;
-                    self.streaks_o += 1;
-                }
-            },
-            _ => ()
-        }
-    }
-
-    pub fn update(&mut self, value: Cell) {
-        // Overwrites value
-        self.value = value;
-
-        // Refreshes self and neighbors
-        self.refresh();
-        for neighbour in &mut self.neighbours {
-            if neighbour.is_some() {
-                neighbour.as_mut().unwrap().refresh();
-            }
-        }
-        
-        // Updates the board
-        if self.board.classic || self.board.indices_empty.len() == 0 {
-            self.board.winner =
-                if self.board.streaks_x > self.board.streaks_o { Some(Player::X) }
-                else if self.board.streaks_x < self.board.streaks_o { Some(Player::O) }
-                else { None };
-            self.board.gameover =
-                if self.board.winner != None { true }
-                else { self.board.indices_empty.len() == 0 };
-        }
-        else {
-            self.board.winner = None;
-            self.board.gameover = false;
-        }
+        // Returns cell
+        cell
     }
 
     pub fn notate(&self) -> char {
