@@ -1,4 +1,3 @@
-use clap::parser::Indices;
 use tic_tac_toe_stencil::{board::Cell, player::Player};
 use crate::solution::luffy_board::LuffyBoard;
 
@@ -29,27 +28,89 @@ pub struct LuffyCell<'a> {
 
 impl<'a> LuffyCell<'a> {
     pub fn initialize(&mut self) {
-let left = self.point.0 >=1; let right = self.point.0 < self.board.width -1;
-let up  = self.point.1 >=1; let down = self.point.1 < self.board.height -1;
-self.neighbours[0] = if left  && up  {Some(&mut self.board.cells[self.index - self.board.width -1])} else{None};
-self.neighbours[1] = if  up          {Some(&mut self.board.cells[self.index - self.board.width ])} else{None};
-self.neighbours[2] = if right && up  {Some(&mut self.board.cells[self.index - self.board.width +1])} else{None};
-self.neighbours[3] = if right        {Some(&mut self.board.cells[self.index +1 ])} else{None};
-self.neighbours[4] = if right && down{Some(&mut self.board.cells[self.index + self.board.width +1])} else{None};
-self.neighbours[5] = if down         {Some(&mut self.board.cells[self.index + self.board.width  ])} else{None};
-self.neighbours[6] = if down  && left{Some(&mut self.board.cells[self.index + self.board.width -1])} else{None};
-self.neighbours[7] = if left         {Some(&mut self.board.cells[self.index  -1])} else{None};
+        // Initializes neighbors
+        let left  = self.point.0 >=1;
+        let right = self.point.0 < self.board.width -1;
+        let up    = self.point.1 >=1;
+        let down  = self.point.1 < self.board.height -1;
+        self.neighbours[0] = if left  && up   { Some(&mut self.board.cells[self.index - self.board.width - 1]) } else{ None };
+        self.neighbours[1] = if          up   { Some(&mut self.board.cells[self.index - self.board.width]) }     else{ None };
+        self.neighbours[2] = if right && up   { Some(&mut self.board.cells[self.index - self.board.width + 1]) } else{ None };
+        self.neighbours[3] = if right         { Some(&mut self.board.cells[self.index + 1 ]) }                   else{ None };
+        self.neighbours[4] = if right && down { Some(&mut self.board.cells[self.index + self.board.width + 1]) } else{ None };
+        self.neighbours[5] = if          down { Some(&mut self.board.cells[self.index + self.board.width  ]) }   else{ None };
+        self.neighbours[6] = if left  && down { Some(&mut self.board.cells[self.index + self.board.width - 1]) } else{ None };
+        self.neighbours[7] = if left          { Some(&mut self.board.cells[self.index - 1 ]) }                   else{ None };
 
-self.update(self.value)
+        // Updates value
+        self.update(self.value);
     }
 
     pub fn refresh(&mut self) {
+        // Refreshes friends
+        self.friends_x = 0;
+        self.friends_o = 0;
+        for i in 0..8 {
+            let neighbour = &self.neighbours[i];
+            match neighbour {
+                Some(cell) => match cell.value {
+                    Cell::X => { self.friends_x += 1; },
+                    Cell::O => { self.friends_o += 1; }
+                    _ => ()
+                },
+                None => continue
+            }
+        }
 
+        // Refreshes streaks
+        self.board.streaks_x -= self.streaks_x;
+        self.board.streaks_o -= self.streaks_o;
+        self.streaks_x = 0;
+        self.streaks_o = 0;
+        match self.value {
+            Cell::X => {
+                for i in 0..4 {
+                    // Checks neighbor
+                    let neighbour = &self.neighbours[i];
+                    if neighbour.is_none() { continue; }
+                    if neighbour.as_ref().unwrap().value != self.value { continue; }
+
+                    // Checks opposite
+                    let opposite = &self.neighbours[i + 4];
+                    if opposite.is_none() { continue; }
+                    if opposite.as_ref().unwrap().value != self.value { continue; }
+
+                    // Increments streaks
+                    self.board.streaks_x += 1;
+                    self.streaks_x += 1;
+                }
+            },
+            Cell::O => {
+                for i in 0..4 {
+                    // Checks neighbor
+                    let neighbour = &self.neighbours[i];
+                    if neighbour.is_none() { continue; }
+                    if neighbour.as_ref().unwrap().value != self.value { continue; }
+
+                    // Checks opposite
+                    let opposite = &self.neighbours[i + 4];
+                    if opposite.is_none() { continue; }
+                    if opposite.as_ref().unwrap().value != self.value { continue; }
+
+                    // Increments streaks
+                    self.board.streaks_o += 1;
+                    self.streaks_o += 1;
+                }
+            },
+            _ => ()
+        }
     }
 
     pub fn update(&mut self, value: Cell) {
+        // Overwrites value
         self.value = value;
 
+        // Refreshes self and neighbors
         self.refresh();
         for neighbour in &mut self.neighbours {
             if neighbour.is_some() {
@@ -74,6 +135,7 @@ self.update(self.value)
     }
 
     pub fn notate(&self) -> char {
+        // Returns notation
         match self.value {
             Cell::X => 'x',
             Cell::O => 'o',
