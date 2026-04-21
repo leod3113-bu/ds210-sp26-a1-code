@@ -1,9 +1,10 @@
-use core::f32;
+use core::{f32, time};
 use std::{collections::{HashMap, HashSet}, time::SystemTime};
 use tic_tac_toe_stencil::{board::Cell, player::Player};
 use crate::solution::luffy_cell::LuffyCell;
+use std::time::{Instant, Duration};
 
-pub struct LuffyBoard {
+pub struct LuffyBoard <'a> {
     // Size
     pub height: usize,
     pub width: usize,
@@ -27,7 +28,7 @@ pub struct LuffyBoard {
     pub classic: bool,
     
     // Cells
-    pub cells: Vec<LuffyCell>,
+    pub cells: Vec<LuffyCell<'a>>,
 
     // Streaks (Number of three-in-a-rows)
     pub streaks_x: u64,
@@ -44,10 +45,14 @@ pub struct LuffyBoard {
 
     // Game Terminal States
     pub winner: Option<Player>,
-    pub gameover: bool
+    pub gameover: bool,
+
+    //Time managment
+    pub since: Instant,
 }
 
-impl LuffyBoard {
+impl LuffyBoard<'a> {
+    
     pub fn evaluate_heuristics(&self) -> f32 {
         if self.gameover {
             return match self.winner {
@@ -72,32 +77,22 @@ impl LuffyBoard {
         if self.gameover {
             panic!("The game is over... There are no legal moves left to search.");
         }
-
-        // Finds best move
-        self.since = SystemTime::now();
-        let mut best = None;
+        let epoch = Instant::now();
+        let mut index = self.size; 
         let mut eval = 0.0;
-        for depth in 0..(plies * 2) {
-            // Cancels if timed out
-            let elapsed = SystemTime::now().duration_since(self.since).unwrap().as_secs();
-            if elapsed > self.timeout {
-                break;
-            }
-
-            // Clears transposition between each search
+        for depth in 0..plies * 2{
+            let cancel= Instant::now().duration_since(epoch).as_secs() >= timeout;
+            if cancel {break;};
             self.transpositions.clear();
-
-            // Updates best result
-            let best_result = self.recursive_search(f32::INFINITY, -f32::INFINITY, depth);
-            best = Some(best_result.0);
-            eval = best_result.1;
+            let result = self.recursive_search(player, f32::NEG_INFINITY, f32::INFINITY, epoch, timeout, depth);
+            index = result.0;
+            eval = result.1;
         }
-
-        // Returns best result
-        (best.unwrap(), eval)
+        (index,eval)
+        
     }
 
-    pub fn recursive_search(&mut self, player: Player, mut alpha: f32, mut beta: f32, epoch: SystemTime, timeout: u64, depth: u64) -> (usize, f32) {
+    pub fn recursive_search(&mut self, player: Player, mut alpha: f32, mut beta: f32, epoch: Instant, timeout: u64, depth: u64) -> (usize, f32) {
         (0, 0.0)
 
     }
