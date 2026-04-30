@@ -1,46 +1,52 @@
-use tic_tac_toe_stencil::agents::Agent;
-use tic_tac_toe_stencil::board::{Board};
-use tic_tac_toe_stencil::player::Player;
-use crate::solution::luffy_board::{LuffyBoard};
+// Imports
+use crate::solution::{
+    engine::iterative_search,
+    movement::{
+        get_eval,
+        get_index
+    },
+    player::Player,
+    tile_map::{
+        TILE_MAP_LINE,
+        enable_bit_map_o,
+        enable_bit_map_w,
+        enable_bit_map_x
+    }
+};
 
-
-// Your solution solution.
 pub struct SolutionAgent {}
-
-// Put your solution here.
-impl Agent for SolutionAgent {
-    // Should returns (<score>, <x>, <y>)
-    // where <score> is your estimate for the score of the game
-    // and <x>, <y> are the position of the move your solution will make.
-    fn solve(board: &mut Board, player: Player, _time_limit: u64) -> (i32, usize, usize) {
-        // Parses cells
+impl tic_tac_toe_stencil::agents::Agent for SolutionAgent {
+    fn solve(
+        board: &mut tic_tac_toe_stencil::board::Board,
+        player: tic_tac_toe_stencil::player::Player,
+        duration: u64
+    ) -> (i32, usize, usize) {
+        // Creates tile map
         let cells = board.get_cells();
-        let height = cells.len();
-        let width = cells[0].len();
-
-        // Creates position
-        let mut position = Vec::with_capacity(height * width);
-        for row in cells {
-            for cell in row {
-                position.push(cell.clone());
+        let mut tile_map = (0, 0, 0);
+        for y in 0..TILE_MAP_LINE {
+            for x in 0..TILE_MAP_LINE {
+                let index = y * TILE_MAP_LINE + x;
+                match cells[y][x] {
+                    tic_tac_toe_stencil::board::Cell::X => enable_bit_map_x(&mut tile_map, index),
+                    tic_tac_toe_stencil::board::Cell::O => enable_bit_map_o(&mut tile_map, index),
+                    tic_tac_toe_stencil::board::Cell::Wall => enable_bit_map_w(&mut tile_map, index),
+                    _ => ()
+                }
             }
         }
 
-        // Creates luffy board
-        let mut luffy_board = LuffyBoard::new(position, height, width, false);
-
-        // Finds best
-        let results = luffy_board.iterative_search(player, 20, 1);
-        let index = results.0;
-        let evaluation = results.1;
+        // Searches movement
+        let engine = match player {
+            tic_tac_toe_stencil::player::Player::X => Player::X,
+            tic_tac_toe_stencil::player::Player::O => Player::O
+        };
+        let movement = iterative_search(&mut tile_map, &engine, 20, duration as u128 - 25);
         
-        // Returns results
-        let x = index % width; let y = (index - x) / height;
-        (evaluation as i32, y, x)
+        // Resolves movement
+        let index = get_index(&movement);
+        let eval = get_eval(&movement);
+        let (x, y) = (index % TILE_MAP_LINE, index / TILE_MAP_LINE);
+        (eval as i32, y, x)
     }
 }
-
-
-
-
-
