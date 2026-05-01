@@ -104,28 +104,28 @@ pub const SET_PIECE_3_HORIZONTAL: SetPiece = define_set_piece([
     ' ', ' ', ' ', ' ', ' ',
     ' ', ' ', ' ', ' ', ' ',
     ' ', ' ', ' ', ' ', ' '
-], 3, 1, 150.0);
+], 3, 1, 500.0);
 pub const SET_PIECE_3_VERTICAL: SetPiece = define_set_piece([
     'f', ' ', ' ', ' ', ' ',
     'f', ' ', ' ', ' ', ' ',
     'f', ' ', ' ', ' ', ' ',
     ' ', ' ', ' ', ' ', ' ',
     ' ', ' ', ' ', ' ', ' '
-], 1, 3, 150.0);
+], 1, 3, 500.0);
 pub const SET_PIECE_3_FORWARD: SetPiece = define_set_piece([
     ' ', ' ', 'f', ' ', ' ',
     ' ', 'f', ' ', ' ', ' ',
     'f', ' ', ' ', ' ', ' ',
     ' ', ' ', ' ', ' ', ' ',
     ' ', ' ', ' ', ' ', ' '
-], 3, 3, 150.0);
+], 3, 3, 500.0);
 pub const SET_PIECE_3_BACKWARD: SetPiece = define_set_piece([
     'f', ' ', ' ', ' ', ' ',
     ' ', 'f', ' ', ' ', ' ',
     ' ', ' ', 'f', ' ', ' ',
     ' ', ' ', ' ', ' ', ' ',
     ' ', ' ', ' ', ' ', ' '
-], 3, 3, 150.0);
+], 3, 3, 500.0);
 
 // Set pieces : 1-in-a-row (Arm Position)
 pub const SET_PIECE_1_ARM_HORIZONTAL_LEFT: SetPiece = define_set_piece([
