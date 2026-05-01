@@ -236,7 +236,7 @@ transpositions.insert((x_bit_map, o_bit_map, w_bit_map), eval);
 
 ## Set Piece
 
-Our final optimization comes from set pieces. Instead of evaluating (1) how close a cell is to the center, (2) how many potential 3-in-a-rows it can make, (3) how strong a cell's potential dominance is, or other numerical calculation methods, which may be mediocre, unstable, or even harmful at times, we instead opted for pattern recognition.
+Our final optimization comes from set pieces. Instead of evaluating (1) how close a cell is to the center, (2) how many potential 3-in-a-rows it can make, (3) how strong a cell's potential dominance is, or other numerical calculation methods, which may be mediocre, unstable, or even harmful at times, we opted for pattern recognition.
 
 Counter Argument:
 
