@@ -293,7 +293,7 @@ However, if we had simply evaluated from the center, this would have a very low 
 Do you think the best move is to complete the 3-in-a-row? Maybe... however, a better option would be to block O in the center. The rationale behind this is because:
 
 1. X already has an unavoidable 3-in-a-row. This is not the case for O. X should try to kill O's only option for a 3-in-a-row, because a 1:0 advantage is better than a 1:1 advantage.
-2. X can create 2 - 4 more unavoidable 3-in-a-row with the center move. This is way more devastating for O than X creating a quick 3-in-a-row. O can't possibly block all of them before X claims victory. There is no way to easily make our potential algorithm see that advantaged move without also creating many many different layers of heuristic calculation (which would also drag down our speed :c)!
+2. X can create 2 - 4 more unavoidable 3-in-a-row with the center move. This is way more devastating for O than X creating a quick 3-in-a-row. O can't possibly block all of them before X claims victory. There is no way to easily make our potential algorithm see that advanced move without also creating many many different layers of heuristic calculation (which would also drag down our speed :c)!
 
 (3): Imagine a position like so:
 
